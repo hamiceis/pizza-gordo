@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { useCartStore } from "@/store/cartStore";
 import {
   Button,
@@ -36,7 +36,7 @@ const cartSchema = z.object({
 
 type CartFormData = z.infer<typeof cartSchema>;
 
-export const CartPage: React.FC = () => {
+export const CartPage = () => {
   const { items, updateQuantity, removeItem, getTotal } = useCartStore();
   const [formData, setFormData] = useState<CartFormData>({
     name: "",
@@ -52,7 +52,7 @@ export const CartPage: React.FC = () => {
   const total = getTotal();
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -66,7 +66,7 @@ export const CartPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, paymentMethod: method }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     // Validação com Zod
@@ -108,14 +108,14 @@ export const CartPage: React.FC = () => {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-[#FDFBF7] pt-24 pb-12 px-4 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
+      <div className="min-h-screen bg-background pt-24 pb-12 px-4 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
         <div className="bg-pizza-orange/10 p-8 rounded-full mb-6">
           <ShoppingBag className="w-16 h-16 text-pizza-orange" />
         </div>
-        <h2 className="text-3xl font-bold text-pizza-dark mb-4">
+        <h2 className="text-3xl font-bold text-foreground mb-4">
           Seu carrinho está vazio
         </h2>
-        <p className="text-stone-500 mb-8 max-w-md">
+        <p className="text-muted-foreground mb-8 max-w-md">
           Parece que você ainda não escolheu sua pizza favorita. Volte ao
           cardápio e faça seu pedido!
         </p>
@@ -130,7 +130,7 @@ export const CartPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] pt-24 pb-12 px-4 animate-in fade-in duration-500">
+    <div className="min-h-screen bg-background pt-24 pb-12 px-4 animate-in fade-in duration-500">
       <div className="container mx-auto max-w-6xl">
         <Link to="/">
           <Button
@@ -141,7 +141,7 @@ export const CartPage: React.FC = () => {
           </Button>
         </Link>
 
-        <h1 className="text-3xl md:text-4xl font-bold text-pizza-dark mb-8 flex items-center gap-3">
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-8 flex items-center gap-3">
           <span className="bg-pizza-red text-white p-2 rounded-lg shadow-md">
             <ShoppingBag className="w-8 h-8" />
           </span>
@@ -151,16 +151,16 @@ export const CartPage: React.FC = () => {
         <div className="grid lg:grid-cols-12 gap-8">
           {/* Coluna Esquerda: Itens */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
-              <div className="p-6 border-b border-stone-100 bg-stone-50/50">
-                <h2 className="font-bold text-xl text-pizza-dark flex items-center gap-2">
+            <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+              <div className="p-6 border-b border-border bg-muted/30">
+                <h2 className="font-bold text-xl text-foreground flex items-center gap-2">
                   Itens do Pedido{" "}
-                  <Badge className="ml-2 bg-pizza-dark">
+                  <Badge className="ml-2 bg-foreground text-background">
                     {items.reduce((a, b) => a + b.quantity, 0)}
                   </Badge>
                 </h2>
               </div>
-              <div className="divide-y divide-stone-100">
+              <div className="divide-y divide-border">
                 {items.map((item) => (
                   <div
                     key={item.id}
@@ -173,7 +173,7 @@ export const CartPage: React.FC = () => {
                     />
                     <div className="flex-1">
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-bold text-lg text-pizza-dark">
+                        <h3 className="font-bold text-lg text-foreground">
                           {item.name}
                         </h3>
                         <p className="font-bold text-pizza-red text-lg">
@@ -183,15 +183,15 @@ export const CartPage: React.FC = () => {
                           }).format(item.price * item.quantity)}
                         </p>
                       </div>
-                      <p className="text-sm text-stone-500 mb-4 line-clamp-2">
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                         {item.description}
                       </p>
 
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center bg-stone-100 rounded-lg border border-stone-200">
+                        <div className="flex items-center bg-muted rounded-lg border border-border">
                           <button
                             onClick={() => updateQuantity(item.id, -1)}
-                            className="p-2 hover:bg-stone-200 text-stone-600 transition-colors"
+                            className="p-2 hover:bg-background text-muted-foreground transition-colors"
                           >
                             <Minus className="w-4 h-4" />
                           </button>
@@ -207,7 +207,7 @@ export const CartPage: React.FC = () => {
                         </div>
                         <button
                           onClick={() => removeItem(item.id)}
-                          className="text-stone-400 hover:text-red-500 transition-colors p-2"
+                          className="text-muted-foreground hover:text-destructive transition-colors p-2"
                           title="Remover item"
                         >
                           <Trash2 className="w-5 h-5" />
@@ -224,14 +224,14 @@ export const CartPage: React.FC = () => {
                 <CheckCircle className="w-5 h-5" />
                 Adicionou tudo?
               </h3>
-              <p className="text-stone-600 text-sm mb-4">
+              <p className="text-muted-foreground text-sm mb-4">
                 Não esqueça da sobremesa! Temos pizzas doces incríveis esperando
                 por você.
               </p>
               <Link to="/">
                 <Button
                   variant="outline"
-                  className="bg-white border-orange-200 text-pizza-orange hover:bg-orange-50"
+                  className="bg-card border-orange-200 text-pizza-orange hover:bg-orange-50"
                 >
                   Ver mais opções
                 </Button>
@@ -242,11 +242,11 @@ export const CartPage: React.FC = () => {
           {/* Coluna Direita: Formulário de Pedido */}
           <div className="lg:col-span-5">
             <Card className="sticky top-24 shadow-xl border-t-4 border-t-pizza-red overflow-hidden">
-              <div className="p-6 bg-stone-50 border-b border-stone-100">
-                <h2 className="font-bold text-xl text-pizza-dark mb-1">
+              <div className="p-6 bg-muted/30 border-b border-border">
+                <h2 className="font-bold text-xl text-foreground mb-1">
                   Dados da Entrega
                 </h2>
-                <p className="text-sm text-stone-500">
+                <p className="text-sm text-muted-foreground">
                   Preencha para finalizar seu pedido no WhatsApp.
                 </p>
               </div>
@@ -321,7 +321,7 @@ export const CartPage: React.FC = () => {
                           "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200",
                           formData.paymentMethod === method
                             ? "border-pizza-red bg-red-50 text-pizza-red shadow-sm transform scale-105"
-                            : "border-stone-200 text-stone-500 hover:bg-stone-50 hover:border-stone-300"
+                            : "border-border text-muted-foreground hover:bg-muted hover:border-foreground/20"
                         )}
                       >
                         {method === "pix" && (
@@ -354,8 +354,8 @@ export const CartPage: React.FC = () => {
                   />
                 </div>
 
-                <div className="border-t border-stone-100 pt-4 mt-4 space-y-2">
-                  <div className="flex justify-between text-stone-500">
+                <div className="border-t border-border pt-4 mt-4 space-y-2">
+                  <div className="flex justify-between text-muted-foreground">
                     <span>Subtotal</span>
                     <span>
                       {new Intl.NumberFormat("pt-BR", {
@@ -364,11 +364,11 @@ export const CartPage: React.FC = () => {
                       }).format(total)}
                     </span>
                   </div>
-                  <div className="flex justify-between text-stone-500">
+                  <div className="flex justify-between text-muted-foreground">
                     <span>Taxa de Entrega</span>
                     <span className="text-green-600 font-medium">Grátis</span>
                   </div>
-                  <div className="flex justify-between text-2xl font-bold text-pizza-dark pt-2 border-t border-stone-100">
+                  <div className="flex justify-between text-2xl font-bold text-foreground pt-2 border-t border-border">
                     <span>Total</span>
                     <span className="text-pizza-red">
                       {new Intl.NumberFormat("pt-BR", {

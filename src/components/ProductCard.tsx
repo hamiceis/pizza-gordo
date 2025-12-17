@@ -1,4 +1,3 @@
-import React from "react";
 import { Product } from "@/types";
 import { Button, Badge, Card, cn } from "@/components/ui/UIComponents";
 import { Plus, Minus, ShoppingBasket } from "lucide-react";
@@ -9,10 +8,7 @@ interface ProductCardProps {
   className?: string;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({
-  product,
-  className,
-}) => {
+export function ProductCard({ product, className }: ProductCardProps) {
   const { items, addItem, updateQuantity, removeItem } = useCartStore();
   const cartItem = items.find((item) => item.id === product.id);
 
@@ -34,7 +30,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <Card
       className={cn(
-        "overflow-hidden group hover:shadow-xl transition-all duration-300 border-stone-200 hover:border-pizza-orange flex flex-col h-full",
+        "overflow-hidden group hover:shadow-xl transition-all duration-300 border-border hover:border-pizza-orange flex flex-col h-full",
         className
       )}
     >
@@ -46,7 +42,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         />
         {product.popular && (
           <div className="absolute top-2 right-2">
-            <Badge className="bg-pizza-yellow text-pizza-dark font-bold hover:bg-yellow-500 shadow-sm">
+            <Badge className="bg-pizza-yellow text-black font-bold hover:bg-yellow-500 shadow-sm">
               Mais Pedido
             </Badge>
           </div>
@@ -54,11 +50,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       </div>
       <div className="p-4 flex flex-col flex-1">
         <div className="mb-2">
-          <h3 className="font-bold text-lg text-pizza-dark font-sans leading-tight">
+          <h3 className="font-bold text-lg text-foreground font-sans leading-tight">
             {product.name}
           </h3>
         </div>
-        <p className="text-sm text-stone-500 line-clamp-2 mb-4 flex-1">
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-1">
           {product.description}
         </p>
 
@@ -68,7 +64,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </span>
 
           {cartItem ? (
-            <div className="flex items-center bg-stone-100 rounded-lg border border-stone-200 shadow-inner">
+            <div className="flex items-center bg-muted rounded-lg border border-border shadow-inner">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -78,7 +74,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               >
                 <Minus className="w-4 h-4" />
               </button>
-              <span className="w-8 text-center font-bold text-pizza-dark text-sm">
+              <span className="w-8 text-center font-bold text-foreground text-sm">
                 {cartItem.quantity}
               </span>
               <button
@@ -109,4 +105,4 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       </div>
     </Card>
   );
-};
+}

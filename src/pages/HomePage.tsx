@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Clock,
   MapPin,
@@ -14,15 +14,12 @@ import { Button, Input } from "@/components/ui/UIComponents";
 import { StatusBadge } from "@/components/StatusBadge";
 import { PRODUCTS } from "@/data/products";
 import { TESTIMONIALS } from "@/data/testimonials";
-import { useCartStore } from "@/store/cartStore";
 
 export const HomePage = () => {
   const [activeCategory, setActiveCategory] = useState<
     "todos" | "pizza" | "combo" | "bebida" | "sobremesa"
   >("todos");
   const [searchQuery, setSearchQuery] = useState("");
-  const [view, setView] = React.useState("home"); // Local state or just use router?
-  // actually existing code used useCartStore view. We should remove that dependency and use router scrolling.
 
   const popularProducts = PRODUCTS.filter((p) => p.popular);
 
@@ -41,7 +38,7 @@ export const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] font-sans text-pizza-dark">
+    <div className="min-h-screen bg-background font-sans text-foreground">
       {/* HERO SECTION */}
       <section className="relative h-[80vh] md:h-[650px] flex items-center justify-center overflow-hidden">
         {/* Background Image with Overlay */}
@@ -61,7 +58,7 @@ export const HomePage = () => {
             A Pizza mais <span className="text-pizza-yellow">Recheada</span> da
             Cidade
           </h1>
-          <p className="text-lg md:text-xl text-stone-200 mb-8 max-w-2xl mx-auto drop-shadow-md font-medium">
+          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto drop-shadow-md font-medium">
             Ingredientes premium, muito recheio e aquele sabor inconfundível do
             forno a lenha. Peça no conforto da sua casa.
           </p>
@@ -87,17 +84,17 @@ export const HomePage = () => {
       </section>
 
       {/* INFO BAR */}
-      <div className="bg-white border-b border-stone-200 py-6 shadow-sm sticky top-[60px] md:top-0 z-20">
+      <div className="bg-card border-b border-border py-6 shadow-sm sticky top-[60px] md:top-0 z-20">
         <div className="container mx-auto px-4 flex flex-wrap justify-center md:justify-between items-center gap-6">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-pizza-red/10 rounded-full text-pizza-red">
               <Clock className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs text-stone-500 font-semibold uppercase">
+              <p className="text-xs text-muted-foreground font-semibold uppercase">
                 Horário
               </p>
-              <p className="font-medium text-pizza-dark">
+              <p className="font-medium text-foreground">
                 Seg - Sab: 17h às 23h
               </p>
             </div>
@@ -107,23 +104,23 @@ export const HomePage = () => {
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs text-stone-500 font-semibold uppercase">
+              <p className="text-xs text-muted-foreground font-semibold uppercase">
                 Localização
               </p>
-              <p className="font-medium text-pizza-dark">
+              <p className="font-medium text-foreground">
                 Rua das Pizzas, 123 - Centro
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3 hidden md:flex">
+          <div className="hidden md:flex items-center gap-3">
             <div className="p-2 bg-pizza-red/10 rounded-full text-pizza-red">
               <Flame className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs text-stone-500 font-semibold uppercase">
+              <p className="text-xs text-muted-foreground font-semibold uppercase">
                 Qualidade
               </p>
-              <p className="font-medium text-pizza-dark">Forno a Lenha</p>
+              <p className="font-medium text-foreground">Forno a Lenha</p>
             </div>
           </div>
         </div>
@@ -135,7 +132,7 @@ export const HomePage = () => {
         <ProductCarousel products={popularProducts} title="Destaques da Casa" />
 
         <div className="text-center mb-12 mt-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-pizza-dark mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Cardápio Completo
           </h2>
           <div className="w-20 h-1 bg-pizza-orange mx-auto rounded-full mb-8" />
@@ -143,7 +140,7 @@ export const HomePage = () => {
           {/* Search & Filter */}
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="relative max-w-md mx-auto">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <Input
                 placeholder="Buscar por sabor..."
                 className="pl-10 h-12 rounded-full border-stone-200 shadow-sm focus:ring-pizza-orange"
@@ -166,7 +163,7 @@ export const HomePage = () => {
                   className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
                     activeCategory === cat.id
                       ? "bg-pizza-red text-white shadow-md scale-105"
-                      : "bg-white text-stone-600 border border-stone-200 hover:bg-stone-50"
+                      : "bg-card text-muted-foreground border border-border hover:bg-muted"
                   }`}
                 >
                   {cat.label}
@@ -183,8 +180,8 @@ export const HomePage = () => {
               <ProductCard key={product.id} product={product} />
             ))
           ) : (
-            <div className="col-span-full text-center py-20 bg-white rounded-xl border border-dashed border-stone-300">
-              <p className="text-stone-500 text-lg">
+            <div className="col-span-full text-center py-20 bg-card rounded-xl border border-dashed border-border">
+              <p className="text-muted-foreground text-lg">
                 Nenhum produto encontrado com esse nome.
               </p>
               <Button
@@ -205,7 +202,7 @@ export const HomePage = () => {
       {/* REVIEWS SECTION */}
       <section
         id="avaliacoes"
-        className="py-20 bg-pizza-dark text-white relative overflow-hidden"
+        className="py-20 bg-secondary text-secondary-foreground relative overflow-hidden"
       >
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]"></div>
         <div className="container mx-auto px-4 relative z-10">

@@ -9,7 +9,7 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="bg-white pt-16 pb-8 border-t border-stone-200">
+    <footer className="bg-secondary pt-16 pb-8 border-t border-border">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div className="space-y-4">
@@ -17,27 +17,29 @@ export const Footer = () => {
               <div className="bg-pizza-red p-2 rounded-full">
                 <ChefHat className="text-white w-5 h-5" />
               </div>
-              <span className="text-xl font-bold text-pizza-dark">
+              <span className="text-xl font-bold text-secondary-foreground">
                 Pizza do Gordo
               </span>
             </div>
-            <p className="text-stone-500 text-sm leading-relaxed">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               A melhor pizza da cidade, feita com carinho e muito recheio para
               matar sua fome.
             </p>
             <div className="flex gap-4">
-              <button className="bg-stone-100 p-2 rounded-full hover:bg-pizza-red hover:text-white transition-colors">
+              <button className="bg-background p-2 rounded-full hover:bg-pizza-red hover:text-white transition-colors">
                 <Instagram className="w-5 h-5" />
               </button>
-              <button className="bg-stone-100 p-2 rounded-full hover:bg-blue-600 hover:text-white transition-colors">
+              <button className="bg-background p-2 rounded-full hover:bg-blue-600 hover:text-white transition-colors">
                 <Facebook className="w-5 h-5" />
               </button>
             </div>
           </div>
 
           <div>
-            <h3 className="font-bold text-pizza-dark mb-6">Links Rápidos</h3>
-            <ul className="space-y-3 text-stone-500 text-sm">
+            <h3 className="font-bold text-secondary-foreground mb-6">
+              Links Rápidos
+            </h3>
+            <ul className="space-y-3 text-muted-foreground text-sm">
               <li>
                 <button
                   onClick={() => scrollToSection("menu")}
@@ -58,8 +60,10 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-bold text-pizza-dark mb-6">Contato</h3>
-            <ul className="space-y-3 text-stone-500 text-sm">
+            <h3 className="font-bold text-secondary-foreground mb-6">
+              Contato
+            </h3>
+            <ul className="space-y-3 text-muted-foreground text-sm">
               <li className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-pizza-red shrink-0" />
                 <span>(11) 99999-9999</span>
@@ -76,11 +80,13 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-bold text-pizza-dark mb-6">Horário</h3>
-            <ul className="space-y-2 text-stone-500 text-sm">
+            <h3 className="font-bold text-secondary-foreground mb-6">
+              Horário
+            </h3>
+            <ul className="space-y-2 text-muted-foreground text-sm">
               <li className="flex justify-between">
                 <span>Segunda a Sábado</span>
-                <span className="font-medium text-pizza-dark">
+                <span className="font-medium text-secondary-foreground">
                   17:00 - 23:00
                 </span>
               </li>
@@ -95,7 +101,7 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-stone-100 pt-8 text-center text-stone-400 text-sm">
+        <div className="border-t border-border pt-8 text-center text-muted-foreground text-sm">
           <p>
             &copy; {new Date().getFullYear()} Pizza do Gordo. Todos os direitos
             reservados.

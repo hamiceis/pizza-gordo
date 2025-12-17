@@ -45,11 +45,13 @@ export default {
         },
         // Custom Pizza Palette
         pizza: {
-          red: '#BF0F1E',    // Primary Action
-          green: '#748C1B',  // Success / Veg
-          yellow: '#F2AE2E', // Stars / Highlights
-          orange: '#F28627', // Secondary Accent
-          dark: '#25252D',   // Text / Backgrounds
+          red: '#C60000',    // Bright Red
+          green: '#748C1B',  // Keep for success
+          yellow: '#F2AE2E', // Keep for stars
+          orange: '#C60000', // Mapped to Red to unify theme (was #F28627)
+          dark: '#000000',   // Black
+          muted: '#474F58',  // Dark Gray secondary
+          accent: '#6B0000', // Dark Red
         }
       },
       borderRadius: {

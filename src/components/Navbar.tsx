@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ShoppingCart, ChefHat } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { Button } from "@/components/ui/UIComponents";
@@ -45,7 +45,7 @@ export const Navbar = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${
         isScrolled || isCartPage
-          ? "bg-pizza-dark/95 backdrop-blur-sm shadow-md py-2"
+          ? "bg-secondary/95 backdrop-blur-sm shadow-md py-2"
           : "bg-transparent py-4"
       }`}
     >
@@ -78,8 +78,8 @@ export const Navbar = () => {
               }
               className={`text-sm font-medium hover:text-pizza-yellow transition-colors ${
                 isScrolled || isCartPage
-                  ? "text-stone-300"
-                  : "text-stone-200 hover:text-white drop-shadow"
+                  ? "text-muted-foreground"
+                  : "text-muted-foreground hover:text-white drop-shadow"
               }`}
             >
               {item}

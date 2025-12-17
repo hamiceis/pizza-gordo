@@ -26,12 +26,13 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variants = {
     primary: "bg-pizza-red text-white hover:bg-red-700 shadow-md",
-    secondary: "bg-pizza-dark text-white hover:bg-black",
+    secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
     success: "bg-pizza-green text-white hover:bg-lime-800 shadow-sm",
     outline:
-      "border border-pizza-dark/20 bg-transparent hover:bg-pizza-dark/5 text-pizza-dark",
-    ghost: "hover:bg-pizza-dark/5 hover:text-pizza-dark",
-    destructive: "bg-red-500 text-white hover:bg-red-600",
+      "border border-input bg-transparent hover:bg-muted text-foreground",
+    ghost: "hover:bg-muted hover:text-foreground",
+    destructive:
+      "bg-destructive text-destructive-foreground hover:bg-destructive/90",
   };
 
   const sizes = {
@@ -65,7 +66,7 @@ export const Badge: React.FC<{
         "border-transparent bg-pizza-orange text-white hover:bg-orange-600";
       break;
     case "outline":
-      styles = "text-pizza-dark border-pizza-dark/20";
+      styles = "text-foreground border-border";
       break;
     case "success":
       styles = "border-transparent bg-pizza-green text-white";
@@ -85,7 +86,7 @@ export const Card: React.FC<{
 }> = ({ children, className }) => (
   <div
     className={cn(
-      "rounded-xl border border-stone-200 bg-white text-pizza-dark shadow-sm",
+      "rounded-xl border border-border bg-card text-card-foreground shadow-sm",
       className
     )}
   >
@@ -100,7 +101,7 @@ export const Input: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = ({
 }) => (
   <input
     className={cn(
-      "flex h-10 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-stone-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pizza-orange focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
       className
     )}
     {...props}
@@ -113,7 +114,7 @@ export const Textarea: React.FC<
 > = ({ className, ...props }) => (
   <textarea
     className={cn(
-      "flex min-h-[80px] w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-stone-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pizza-orange focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
       className
     )}
     {...props}
@@ -129,7 +130,7 @@ export const Label: React.FC<{
   <label
     htmlFor={htmlFor}
     className={cn(
-      "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-pizza-dark",
+      "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground",
       className
     )}
   >
