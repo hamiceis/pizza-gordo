@@ -30,7 +30,15 @@ import { Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { useForm, Controller } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Helmet } from "react-helmet-async";
@@ -74,14 +82,7 @@ export const CartPage = () => {
   // ==========================================
   // CONFIGURAÇÃO DO REACT HOOK FORM
   // ==========================================
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<CartFormData>({
+  const form = useForm<CartFormData>({
     resolver: zodResolver(cartSchema),
     defaultValues: {
       name: "",
@@ -94,8 +95,8 @@ export const CartPage = () => {
   });
 
   // Observa o valor de deliveryMethod em tempo real para renderização condicional
-  const deliveryMethod = watch("deliveryMethod");
-  const paymentMethod = watch("paymentMethod");
+  const deliveryMethod = form.watch("deliveryMethod");
+  const paymentMethod = form.watch("paymentMethod");
 
   // ==========================================
   // FUNÇÃO DE ENVIO DO FORMULÁRIO
@@ -297,195 +298,209 @@ export const CartPage = () => {
                 </div>
 
                 {/* Início do Form gerenciado pelo React Hook Form */}
-                <form
-                  onSubmit={handleSubmit(onSubmit)}
-                  className="p-6 space-y-5"
-                >
-                  {/* Campo NOME */}
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Seu Nome</Label>
-                    <Input
-                      id="name"
-                      placeholder="Como podemos te chamar?"
-                      {...register("name")} // Registra o campo no RHF
-                      className={errors.name ? "border-red-500" : ""}
-                    />
-                    {errors.name && (
-                      <span className="text-xs text-red-500 font-medium">
-                        {errors.name.message}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Campo TELEFONE */}
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Telefone / WhatsApp</Label>
-                    <Input
-                      id="phone"
-                      placeholder="(11) 99999-9999"
-                      {...register("phone")}
-                      className={errors.phone ? "border-red-500" : ""}
-                    />
-                    {errors.phone && (
-                      <span className="text-xs text-red-500 font-medium">
-                        {errors.phone.message}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Seletor TIPO DE ENTREGA (Usando Controller para componentes controlados) */}
-                  <div className="space-y-2">
-                    <Label>Tipo de Entrega</Label>
-                    <Controller
-                      name="deliveryMethod"
-                      control={control}
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="p-6 space-y-5"
+                  >
+                    {/* Campo NOME */}
+                    <FormField
+                      control={form.control}
+                      name="name"
                       render={({ field }) => (
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o tipo de entrega" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="entrega">
-                              <div className="flex items-center gap-2">
-                                <div className="bg-pizza-red/10 p-1 rounded">
-                                  <MapPin className="w-4 h-4 text-pizza-red" />
-                                </div>
-                                Entrega em Domicílio
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="retirada">
-                              <div className="flex items-center gap-2">
-                                <div className="bg-pizza-orange/10 p-1 rounded">
-                                  <Store className="w-4 h-4 text-pizza-orange" />
-                                </div>
-                                Retirada no Balcão
-                              </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <FormItem>
+                          <FormLabel>Seu Nome</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Como podemos te chamar?"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
                     />
-                  </div>
 
-                  {/* Campo ENDEREÇO (Renderizado Condicionalmente) */}
-                  {deliveryMethod === "entrega" && (
-                    <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                      <Label htmlFor="address">Endereço Completo</Label>
-                      <Textarea
-                        id="address"
-                        placeholder="Rua, Número, Bairro, Complemento..."
-                        {...register("address")}
-                        className={cn(
-                          "min-h-[80px]",
-                          errors.address ? "border-red-500" : ""
+                    {/* Campo TELEFONE */}
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Telefone / WhatsApp</FormLabel>
+                          <FormControl>
+                            <Input placeholder="(11) 99999-9999" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Seletor TIPO DE ENTREGA */}
+                    <FormField
+                      control={form.control}
+                      name="deliveryMethod"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Tipo de Entrega</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione o tipo de entrega" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="entrega">
+                                <div className="flex items-center gap-2">
+                                  <div className="bg-pizza-red/10 p-1 rounded">
+                                    <MapPin className="w-4 h-4 text-pizza-red" />
+                                  </div>
+                                  Entrega em Domicílio
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="retirada">
+                                <div className="flex items-center gap-2">
+                                  <div className="bg-pizza-orange/10 p-1 rounded">
+                                    <Store className="w-4 h-4 text-pizza-orange" />
+                                  </div>
+                                  Retirada no Balcão
+                                </div>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Campo ENDEREÇO (Renderizado Condicionalmente) */}
+                    {deliveryMethod === "entrega" && (
+                      <FormField
+                        control={form.control}
+                        name="address"
+                        render={({ field }) => (
+                          <FormItem className="animate-in fade-in slide-in-from-top-2">
+                            <FormLabel>Endereço Completo</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Rua, Número, Bairro, Complemento..."
+                                className="min-h-[80px]"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
                         )}
                       />
-                      {errors.address && (
-                        <span className="text-xs text-red-500 font-medium">
-                          {errors.address.message}
-                        </span>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Seleção de FORMA DE PAGAMENTO */}
-                  <div className="space-y-3">
-                    <Label>Forma de Pagamento</Label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {["pix", "cartao", "dinheiro"].map((method) => (
-                        <button
-                          key={method}
-                          type="button"
-                          onClick={() =>
-                            setValue("paymentMethod", method as any)
-                          } // Atualiza o valor no RHF
-                          className={cn(
-                            "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200",
-                            paymentMethod === method
-                              ? "border-pizza-red bg-red-50 text-pizza-red shadow-sm transform scale-105"
-                              : "border-input text-muted-foreground hover:bg-muted hover:border-foreground/20"
-                          )}
-                        >
-                          {method === "pix" && (
-                            <QrCode className="w-5 h-5 mb-1" />
-                          )}
-                          {method === "cartao" && (
-                            <CreditCard className="w-5 h-5 mb-1" />
-                          )}
-                          {method === "dinheiro" && (
-                            <Banknote className="w-5 h-5 mb-1" />
-                          )}
-                          <span className="text-xs font-semibold capitalize">
-                            {method === "cartao"
-                              ? "Cartão"
-                              : method.toUpperCase()}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Campo OBSERVAÇÕES */}
-                  <div className="space-y-2">
-                    <Label htmlFor="notes">Observações</Label>
-                    <Input
-                      id="notes"
-                      placeholder="Ex: Sem cebola, capricha no orégano..."
-                      {...register("notes")}
-                    />
-                  </div>
-
-                  {/* RESUMO DE VALORES */}
-                  <div className="border-t border-border pt-4 mt-4 space-y-2">
-                    <div className="flex justify-between text-muted-foreground">
-                      <span>Subtotal</span>
-                      <span>
-                        {new Intl.NumberFormat("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        }).format(total)}
-                      </span>
-                    </div>
-                    {deliveryMethod === "entrega" ? (
-                      <div className="flex justify-between text-muted-foreground">
-                        <span>Taxa de Entrega</span>
-                        <span className="text-green-600 font-medium">
-                          Grátis
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex justify-between text-muted-foreground">
-                        <span>Retirada</span>
-                        <span className="text-green-600 font-medium">
-                          Sem custo
-                        </span>
-                      </div>
                     )}
 
-                    <div className="flex justify-between text-2xl font-bold text-foreground pt-2 border-t border-border">
-                      <span>Total</span>
-                      <span className="text-pizza-red">
-                        {new Intl.NumberFormat("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        }).format(total)}
-                      </span>
+                    {/* Seleção de FORMA DE PAGAMENTO */}
+                    <div className="space-y-3">
+                      <Label>Forma de Pagamento</Label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {["pix", "cartao", "dinheiro"].map((method) => (
+                          <button
+                            key={method}
+                            type="button"
+                            onClick={() =>
+                              form.setValue("paymentMethod", method as any)
+                            } // Atualiza o valor no RHF
+                            className={cn(
+                              "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200",
+                              paymentMethod === method
+                                ? "border-pizza-red bg-red-50 text-pizza-red shadow-sm transform scale-105"
+                                : "border-input text-muted-foreground hover:bg-muted hover:border-foreground/20"
+                            )}
+                          >
+                            {method === "pix" && (
+                              <QrCode className="w-5 h-5 mb-1" />
+                            )}
+                            {method === "cartao" && (
+                              <CreditCard className="w-5 h-5 mb-1" />
+                            )}
+                            {method === "dinheiro" && (
+                              <Banknote className="w-5 h-5 mb-1" />
+                            )}
+                            <span className="text-xs font-semibold capitalize">
+                              {method === "cartao"
+                                ? "Cartão"
+                                : method.toUpperCase()}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Botão de Enviar */}
-                  <Button
-                    type="submit"
-                    variant="success"
-                    className="w-full h-14 text-lg shadow-lg hover:shadow-xl transform transition-all hover:-translate-y-1"
-                  >
-                    <Phone className="w-5 h-5 mr-2" />
-                    Enviar Pedido no WhatsApp
-                  </Button>
-                </form>
+                    {/* Campo OBSERVAÇÕES */}
+                    <FormField
+                      control={form.control}
+                      name="notes"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Observações</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Ex: Sem cebola, capricha no orégano..."
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* RESUMO DE VALORES */}
+                    <div className="border-t border-border pt-4 mt-4 space-y-2">
+                      <div className="flex justify-between text-muted-foreground">
+                        <span>Subtotal</span>
+                        <span>
+                          {new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          }).format(total)}
+                        </span>
+                      </div>
+                      {deliveryMethod === "entrega" ? (
+                        <div className="flex justify-between text-muted-foreground">
+                          <span>Taxa de Entrega</span>
+                          <span className="text-green-600 font-medium">
+                            Grátis
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between text-muted-foreground">
+                          <span>Retirada</span>
+                          <span className="text-green-600 font-medium">
+                            Sem custo
+                          </span>
+                        </div>
+                      )}
+
+                      <div className="flex justify-between text-2xl font-bold text-foreground pt-2 border-t border-border">
+                        <span>Total</span>
+                        <span className="text-pizza-red">
+                          {new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          }).format(total)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Botão de Enviar */}
+                    <Button
+                      type="submit"
+                      variant="success"
+                      className="w-full h-14 text-lg shadow-lg hover:shadow-xl transform transition-all hover:-translate-y-1"
+                    >
+                      <Phone className="w-5 h-5 mr-2" />
+                      Enviar Pedido no WhatsApp
+                    </Button>
+                  </form>
+                </Form>
               </Card>
             </div>
           </div>
