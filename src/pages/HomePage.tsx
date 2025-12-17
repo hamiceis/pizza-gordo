@@ -15,7 +15,6 @@ import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/StatusBadge";
 import { PRODUCTS } from "@/data/products";
 import { TESTIMONIALS } from "@/data/testimonials";
-import { Helmet } from "react-helmet-async";
 import { Category } from "@/types";
 
 export const HomePage = () => {
@@ -40,14 +39,6 @@ export const HomePage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Cardápio Online | Pizza do Gordo</title>
-        <meta
-          name="description"
-          content="Confira nosso cardápio completo com as melhores pizzas, combos e sobremesas. Peça agora e receba quentinho em casa!"
-        />
-        <link rel="canonical" href="https://pizzadogordo.com.br/" />
-      </Helmet>
       <div className="min-h-screen bg-background font-sans text-foreground">
         {/* HERO SECTION */}
         <section className="relative h-[80vh] md:h-[650px] flex items-center justify-center overflow-hidden">

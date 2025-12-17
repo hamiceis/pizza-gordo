@@ -41,7 +41,6 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Helmet } from "react-helmet-async";
 
 // ==========================================
 // DEFINIÇÃO DO SCHEMA DE VALIDAÇÃO (ZOD)
@@ -162,13 +161,6 @@ export const CartPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Finalizar Pedido | Pizza do Gordo</title>
-        <meta
-          name="description"
-          content="Finalize seu pedido com segurança e rapidez. Escolha entre entrega ou retirada e pague como preferir."
-        />
-      </Helmet>
       <div className="min-h-screen bg-background pt-24 pb-12 px-4 animate-in fade-in duration-500">
         <div className="container mx-auto max-w-6xl">
           <Link to="/">
