@@ -1,5 +1,6 @@
 import { useCartStore } from "@/store/cartStore";
-import { Button, cn } from "@/components/ui/UIComponents";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { X, Minus, Plus, ShoppingBag, Trash2, ArrowRight } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 

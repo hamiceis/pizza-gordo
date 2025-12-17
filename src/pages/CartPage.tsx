@@ -1,14 +1,17 @@
-import { useState, ChangeEvent, FormEvent } from "react";
 import { useCartStore } from "@/store/cartStore";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
-  Button,
-  Input,
-  Textarea,
-  Label,
-  Card,
-  cn,
-  Badge,
-} from "@/components/ui/UIComponents";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Minus,
   Plus,
@@ -20,84 +23,112 @@ import {
   CreditCard,
   Banknote,
   CheckCircle,
+  MapPin,
+  Store,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-// Esquema de validação com Zod
-const cartSchema = z.object({
-  name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres"),
-  phone: z.string().min(10, "Informe um telefone válido com DDD"),
-  address: z.string().min(5, "O endereço deve ser mais detalhado"),
-  paymentMethod: z.enum(["pix", "cartao", "dinheiro"]),
-  notes: z.string().optional(),
-});
+// ==========================================
+// DEFINIÇÃO DO SCHEMA DE VALIDAÇÃO (ZOD)
+// ==========================================
+// Define as regras de validação do formulário.
+// Utilizamos .refine() no final para validar condicionalmente o endereço
+// (obrigatório apenas se o método for 'entrega').
+const cartSchema = z
+  .object({
+    name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres"),
+    phone: z.string().min(10, "Informe um telefone válido com DDD"),
+    deliveryMethod: z.enum(["entrega", "retirada"]),
+    address: z.string().optional(),
+    paymentMethod: z.enum(["pix", "cartao", "dinheiro"]),
+    notes: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // Se for entrega, o endereço deve estar preenchido e ter tamanho mínimo
+      if (data.deliveryMethod === "entrega") {
+        return !!data.address && data.address.length >= 5;
+      }
+      return true; // Se for retirada, endereço é opcional/ignorado
+    },
+    {
+      message: "O endereço é obrigatório para entrega e deve ser completo",
+      path: ["address"], // Aponta o erro para o campo 'address'
+    }
+  );
 
+// Infere o tipo TypeScript a partir do schema Zod
 type CartFormData = z.infer<typeof cartSchema>;
 
 export const CartPage = () => {
   const { items, updateQuantity, removeItem, getTotal } = useCartStore();
-  const [formData, setFormData] = useState<CartFormData>({
-    name: "",
-    phone: "",
-    address: "",
-    paymentMethod: "pix",
-    notes: "",
-  });
-  const [errors, setErrors] = useState<
-    Partial<Record<keyof CartFormData, string>>
-  >({});
-
   const total = getTotal();
 
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    // Limpar erro ao digitar
-    if (errors[name as keyof CartFormData]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  };
+  // ==========================================
+  // CONFIGURAÇÃO DO REACT HOOK FORM
+  // ==========================================
+  // Inicializa o hook useForm com as configurações:
+  // - resolver: Integração com Zod para validação
+  // - defaultValues: Valores iniciais dos campos
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<CartFormData>({
+    resolver: zodResolver(cartSchema),
+    defaultValues: {
+      name: "",
+      phone: "",
+      deliveryMethod: "entrega",
+      address: "",
+      paymentMethod: "pix",
+      notes: "",
+    },
+  });
 
-  const handlePaymentSelect = (method: "pix" | "cartao" | "dinheiro") => {
-    setFormData((prev) => ({ ...prev, paymentMethod: method }));
-  };
+  // Observa o valor de deliveryMethod em tempo real para renderização condicional
+  const deliveryMethod = watch("deliveryMethod");
+  const paymentMethod = watch("paymentMethod");
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
-    // Validação com Zod
-    const result = cartSchema.safeParse(formData);
-
-    if (!result.success) {
-      const formattedErrors: Partial<Record<keyof CartFormData, string>> = {};
-      result.error.issues.forEach((issue) => {
-        formattedErrors[issue.path[0] as keyof CartFormData] = issue.message;
-      });
-      setErrors(formattedErrors);
-      toast.error("Por favor, verifique os campos do formulário.");
-      return;
-    }
-
+  // ==========================================
+  // FUNÇÃO DE ENVIO DO FORMULÁRIO
+  // ==========================================
+  // Executada apenas se a validação do Zod passar (handleSubmit cuida disso)
+  const onSubmit = (data: CartFormData) => {
     const phoneNumber = "5511999999999";
 
+    // Montagem da mensagem para o WhatsApp
     let message = `🍕 *PEDIDO - PIZZA DO GORDO*\n\n`;
-    message += `*Cliente:* ${formData.name}\n`;
-    message += `*Telefone:* ${formData.phone}\n\n`;
+    message += `*Cliente:* ${data.name}\n`;
+    message += `*Telefone:* ${data.phone}\n`;
+    message += `*Tipo:* ${
+      data.deliveryMethod === "entrega" ? "🛵 Entrega" : "🏪 Retirada"
+    }\n\n`;
+
     message += `*ITENS:* \n`;
     items.forEach((item) => {
       message += `• ${item.quantity}x ${item.name} - R$ ${(
         item.price * item.quantity
       ).toFixed(2)}\n`;
     });
-    message += `\n*Obs:* ${formData.notes || "-"}\n`;
+    message += `\n*Obs:* ${data.notes || "-"}\n`;
     message += `\n💰 *TOTAL: R$ ${total.toFixed(2)}*\n`;
-    message += `💳 *Pagamento:* ${formData.paymentMethod.toUpperCase()}\n`;
-    message += `📍 *Endereço:* ${formData.address}`;
+    message += `💳 *Pagamento:* ${data.paymentMethod.toUpperCase()}\n`;
 
+    // Inclui endereço apenas se for entrega
+    if (data.deliveryMethod === "entrega") {
+      message += `📍 *Endereço:* ${data.address}`;
+    }
+
+    // Codifica e abre o link do WhatsApp
     const encodedMessage = encodeURIComponent(message);
     window.open(
       `https://wa.me/${phoneNumber}?text=${encodedMessage}`,
@@ -106,6 +137,7 @@ export const CartPage = () => {
     toast.success("Pedido gerado! Enviando para o WhatsApp...");
   };
 
+  // Renderização de estado vazio (sem itens no carrinho)
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-background pt-24 pb-12 px-4 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
@@ -149,7 +181,9 @@ export const CartPage = () => {
         </h1>
 
         <div className="grid lg:grid-cols-12 gap-8">
-          {/* Coluna Esquerda: Itens */}
+          {/* ==========================================
+              COLUNA DA ESQUERDA: LISTA DE ITENS
+             ========================================== */}
           <div className="lg:col-span-7 space-y-6">
             <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
               <div className="p-6 border-b border-border bg-muted/30">
@@ -190,6 +224,7 @@ export const CartPage = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center bg-muted rounded-lg border border-border">
                           <button
+                            type="button" // Importante: type button para não submeter form
                             onClick={() => updateQuantity(item.id, -1)}
                             className="p-2 hover:bg-background text-muted-foreground transition-colors"
                           >
@@ -199,6 +234,7 @@ export const CartPage = () => {
                             {item.quantity}
                           </span>
                           <button
+                            type="button"
                             onClick={() => updateQuantity(item.id, 1)}
                             className="p-2 hover:bg-stone-200 text-stone-600 transition-colors"
                           >
@@ -206,6 +242,7 @@ export const CartPage = () => {
                           </button>
                         </div>
                         <button
+                          type="button"
                           onClick={() => removeItem(item.id)}
                           className="text-muted-foreground hover:text-destructive transition-colors p-2"
                           title="Remover item"
@@ -239,76 +276,113 @@ export const CartPage = () => {
             </div>
           </div>
 
-          {/* Coluna Direita: Formulário de Pedido */}
+          {/* ==========================================
+              COLUNA DA DIREITA: FORMULÁRIO DE PEDIDO
+             ========================================== */}
           <div className="lg:col-span-5">
             <Card className="sticky top-24 shadow-xl border-t-4 border-t-pizza-red overflow-hidden">
               <div className="p-6 bg-muted/30 border-b border-border">
                 <h2 className="font-bold text-xl text-foreground mb-1">
-                  Dados da Entrega
+                  Finalização
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Preencha para finalizar seu pedido no WhatsApp.
+                  Escolha como deseja receber seu pedido.
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-6 space-y-5">
+              {/* Início do Form gerenciado pelo React Hook Form */}
+              <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
+                {/* Campo NOME */}
                 <div className="space-y-2">
                   <Label htmlFor="name">Seu Nome</Label>
                   <Input
                     id="name"
-                    name="name"
-                    required
                     placeholder="Como podemos te chamar?"
-                    value={formData.name}
-                    onChange={handleInputChange}
+                    {...register("name")} // Registra o campo no RHF
                     className={errors.name ? "border-red-500" : ""}
                   />
                   {errors.name && (
                     <span className="text-xs text-red-500 font-medium">
-                      {errors.name}
+                      {errors.name.message}
                     </span>
                   )}
                 </div>
 
+                {/* Campo TELEFONE */}
                 <div className="space-y-2">
                   <Label htmlFor="phone">Telefone / WhatsApp</Label>
                   <Input
                     id="phone"
-                    name="phone"
-                    required
                     placeholder="(11) 99999-9999"
-                    value={formData.phone}
-                    onChange={handleInputChange}
+                    {...register("phone")}
                     className={errors.phone ? "border-red-500" : ""}
                   />
                   {errors.phone && (
                     <span className="text-xs text-red-500 font-medium">
-                      {errors.phone}
+                      {errors.phone.message}
                     </span>
                   )}
                 </div>
 
+                {/* Seletor TIPO DE ENTREGA (Usando Controller para componentes controlados) */}
                 <div className="space-y-2">
-                  <Label htmlFor="address">Endereço Completo</Label>
-                  <Textarea
-                    id="address"
-                    name="address"
-                    required
-                    placeholder="Rua, Número, Bairro, Complemento..."
-                    className={cn(
-                      "min-h-[80px]",
-                      errors.address ? "border-red-500" : ""
+                  <Label>Tipo de Entrega</Label>
+                  <Controller
+                    name="deliveryMethod"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o tipo de entrega" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="entrega">
+                            <div className="flex items-center gap-2">
+                              <div className="bg-pizza-red/10 p-1 rounded">
+                                <MapPin className="w-4 h-4 text-pizza-red" />
+                              </div>
+                              Entrega em Domicílio
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="retirada">
+                            <div className="flex items-center gap-2">
+                              <div className="bg-pizza-orange/10 p-1 rounded">
+                                <Store className="w-4 h-4 text-pizza-orange" />
+                              </div>
+                              Retirada no Balcão
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
                     )}
-                    value={formData.address}
-                    onChange={handleInputChange}
                   />
-                  {errors.address && (
-                    <span className="text-xs text-red-500 font-medium">
-                      {errors.address}
-                    </span>
-                  )}
                 </div>
 
+                {/* Campo ENDEREÇO (Renderizado Condicionalmente) */}
+                {deliveryMethod === "entrega" && (
+                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                    <Label htmlFor="address">Endereço Completo</Label>
+                    <Textarea
+                      id="address"
+                      placeholder="Rua, Número, Bairro, Complemento..."
+                      {...register("address")}
+                      className={cn(
+                        "min-h-[80px]",
+                        errors.address ? "border-red-500" : ""
+                      )}
+                    />
+                    {errors.address && (
+                      <span className="text-xs text-red-500 font-medium">
+                        {errors.address.message}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Seleção de FORMA DE PAGAMENTO */}
                 <div className="space-y-3">
                   <Label>Forma de Pagamento</Label>
                   <div className="grid grid-cols-3 gap-2">
@@ -316,12 +390,14 @@ export const CartPage = () => {
                       <button
                         key={method}
                         type="button"
-                        onClick={() => handlePaymentSelect(method as any)}
+                        onClick={() =>
+                          setValue("paymentMethod", method as any)
+                        } // Atualiza o valor no RHF
                         className={cn(
                           "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200",
-                          formData.paymentMethod === method
+                          paymentMethod === method
                             ? "border-pizza-red bg-red-50 text-pizza-red shadow-sm transform scale-105"
-                            : "border-border text-muted-foreground hover:bg-muted hover:border-foreground/20"
+                            : "border-input text-muted-foreground hover:bg-muted hover:border-foreground/20"
                         )}
                       >
                         {method === "pix" && (
@@ -343,17 +419,17 @@ export const CartPage = () => {
                   </div>
                 </div>
 
+                {/* Campo OBSERVAÇÕES */}
                 <div className="space-y-2">
                   <Label htmlFor="notes">Observações</Label>
                   <Input
                     id="notes"
-                    name="notes"
                     placeholder="Ex: Sem cebola, capricha no orégano..."
-                    value={formData.notes}
-                    onChange={handleInputChange}
+                    {...register("notes")}
                   />
                 </div>
 
+                {/* RESUMO DE VALORES */}
                 <div className="border-t border-border pt-4 mt-4 space-y-2">
                   <div className="flex justify-between text-muted-foreground">
                     <span>Subtotal</span>
@@ -364,10 +440,20 @@ export const CartPage = () => {
                       }).format(total)}
                     </span>
                   </div>
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>Taxa de Entrega</span>
-                    <span className="text-green-600 font-medium">Grátis</span>
-                  </div>
+                  {deliveryMethod === "entrega" ? (
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>Taxa de Entrega</span>
+                      <span className="text-green-600 font-medium">Grátis</span>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>Retirada</span>
+                      <span className="text-green-600 font-medium">
+                        Sem custo
+                      </span>
+                    </div>
+                  )}
+
                   <div className="flex justify-between text-2xl font-bold text-foreground pt-2 border-t border-border">
                     <span>Total</span>
                     <span className="text-pizza-red">
@@ -379,6 +465,7 @@ export const CartPage = () => {
                   </div>
                 </div>
 
+                {/* Botão de Enviar */}
                 <Button
                   type="submit"
                   variant="success"
@@ -393,5 +480,5 @@ export const CartPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+    );
+  };

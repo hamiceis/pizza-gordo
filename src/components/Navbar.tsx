@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ShoppingCart, ChefHat } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
-import { Button } from "@/components/ui/UIComponents";
+import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 
 export const Navbar = () => {

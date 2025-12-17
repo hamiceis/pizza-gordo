@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductCarousel } from "@/components/ProductCarousel";
-import { Button, Input } from "@/components/ui/UIComponents";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/StatusBadge";
 import { PRODUCTS } from "@/data/products";
 import { TESTIMONIALS } from "@/data/testimonials";
@@ -74,10 +75,10 @@ export const HomePage = () => {
             <Button
               size="lg"
               variant="outline"
-              className="rounded-full px-8 text-lg text-white border-white hover:bg-white/10 w-full sm:w-auto backdrop-blur-sm"
+              className="rounded-full px-8 text-lg bg-green-600 text-zinc-200 border-green-400 hover:bg-white/10 w-full sm:w-auto backdrop-blur-sm"
             >
               <Phone className="mr-2 w-5 h-5" />
-              (11) 99999-9999
+              Chamar no WhatsApp
             </Button>
           </div>
         </div>

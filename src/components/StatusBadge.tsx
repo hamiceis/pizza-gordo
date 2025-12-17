@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Badge } from "./ui/UIComponents";
+import { Badge } from "./ui/badge";
 import { Clock } from "lucide-react";
 
 export const StatusBadge: React.FC<{ className?: string }> = ({

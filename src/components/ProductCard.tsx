@@ -1,5 +1,8 @@
 import { Product } from "@/types";
-import { Button, Badge, Card, cn } from "@/components/ui/UIComponents";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { Plus, Minus, ShoppingBasket } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 
