@@ -5,6 +5,8 @@ import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/CartDrawer";
 import { Toaster } from "sonner";
 
+import { NotFoundPage } from "@/pages/NotFoundPage";
+
 export const Route = createRootRoute({
   component: () => (
     <>
@@ -17,4 +19,5 @@ export const Route = createRootRoute({
       {/* <TanStackRouterDevtools /> */}
     </>
   ),
+  notFoundComponent: NotFoundPage,
 });
