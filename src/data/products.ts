@@ -33,6 +33,7 @@ export const PRODUCTS: Product[] = [
     category: "pizza",
     image:
       "https://images.unsplash.com/photo-1573821663912-6df460f9c684?q=80&w=800&auto=format&fit=crop",
+    popular: true, 
   },
   {
     id: "4",
