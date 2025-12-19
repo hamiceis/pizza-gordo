@@ -4,8 +4,15 @@ import { useCartStore } from "@/store/cartStore";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 
+const NAV_ITEMS = [
+  { label: "Cardápio", id: "menu" },
+  { label: "Avaliações", id: "avaliacoes" },
+  { label: "Sobre", id: "sobre" },
+  { label: "Contato", id: "contato" },
+]
+
 export const Navbar = () => {
-  const { items, toggleCart } = useCartStore(); // Removido view e setView
+  const { items, toggleCart } = useCartStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -66,14 +73,14 @@ export const Navbar = () => {
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
-          {["Cardápio", "Avaliações", "Sobre", "Contato"].map((item) => (
+          {NAV_ITEMS.map((item) => (
             <button
-              key={item}
+              key={item.id}
               onClick={() =>
                 scrollToSection(
-                  item.toLowerCase() === "cardápio"
+                  item.id.toLowerCase() === "cardapio"
                     ? "menu"
-                    : item.toLowerCase()
+                    : item.id.toLowerCase()
                 )
               }
               className={`text-sm font-medium hover:text-pizza-yellow transition-colors ${
@@ -82,7 +89,7 @@ export const Navbar = () => {
                   : "text-muted-foreground hover:text-white drop-shadow"
               }`}
             >
-              {item}
+              {item.label}
             </button>
           ))}
         </nav>
